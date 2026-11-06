@@ -1,0 +1,12 @@
+name: Tags
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Tag déclenché !"
