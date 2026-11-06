@@ -53,6 +53,8 @@ jobs:
         run: pip install -r requirements.txt -r requirements-dev.txt
       - name: Exécuter les tests
         run: pytest
+        env:
+          APP_NAME: FastAPI Starter
       - name: Afficher les contextes
         run: |
           echo "Application: ${{ env.APP_NAME }}"
