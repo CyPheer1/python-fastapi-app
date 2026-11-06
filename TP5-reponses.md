@@ -51,4 +51,4 @@ Sur un push, `github.event_name` vaut `push` et `github.head_ref`/`github.base_r
 
 ## Run complet
 
-[Run CI](https://github.com/CyPheer1/python-fastapi-app/actions/runs/42298093128)
+[Run CI](https://github.com/CyPheer1/python-fastapi-app/actions/runs/42298450428)
