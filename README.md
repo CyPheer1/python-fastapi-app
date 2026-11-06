@@ -1,56 +1,54 @@
-# FastAPI Starter
+# TP5 - Correction GitHub Actions
 
-A minimal, production‑leaning FastAPI template with testing (coverage), linting/formatting, Docker, and CI. Ships with a root endpoint and a health check.
+## Q0 - Préparation du dépôt
 
-## Features
-- FastAPI + Uvicorn
-- Pydantic Settings for configuration management
-- Custom logging with TRACE level support
-- Testing with pytest + pytest-cov (HTML/XML coverage, 85% threshold)
-- Ruff for linting and formatting; optional mypy typing
-- Dockerfile and GitHub Actions CI (Python 3.13)
+Le code de l'application se trouve dans `app/` et les tests se trouvent dans `tests/`. Le fichier qui contient les dépendances de développement est `requirements-dev.txt`. Le dépôt contient aussi le dossier `.github/workflows/`. J'ai créé la branche `feature/tp-ci` pour réaliser le TP.
 
-## Endpoints
-- `GET /` → `{ "message": "the server is now active" }`
-- `GET /health` → `{ "ok": true }`
+## Q1 - Filtres du workflow
 
-## Quick Start
-```bash
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements-dev.txt
-cp .env.example .env  # Optional: customize your environment variables
-uvicorn app.main:app --reload --port 8000
-```
+Le workflow se déclenche sur un push vers `main` ou `feature/**`, seulement si un fichier de `app/**` ou `tests/**` est modifié. Pour une pull request, il se déclenche avec les événements `opened` et `synchronize`.
 
-Open [http://localhost:8000](http://localhost:8000) and [http://localhost:8000/health](http://localhost:8000/health)
+## Q2 - Modification du README et de app
 
-## Testing with Coverage
+Si je modifie seulement `README.md`, le workflow ne se déclenche pas car ce fichier n'est pas compris dans les chemins filtrés. Si je modifie un fichier dans `app/`, le workflow se déclenche car le chemin correspond au filtre.
 
-```bash
-pytest
-# Outputs: htmlcov/ (HTML), coverage.xml (XML), threshold enforced via pyproject.toml
-```
+## Q3 - Logique des filtres
 
-## Linting and Formatting
+Entre `branches` et `paths`, la logique est **ET** : les deux conditions doivent être respectées. Entre plusieurs types d'activité, la logique est **OU** : un seul type correspondant suffit.
 
-```bash
-ruff check .
-ruff format .
-# Optional typing
-mypy app
-```
+## Q4 - Déclenchement par un tag
 
-## Docker
+Le fichier `tag.yml` se déclenche uniquement lorsqu'un tag qui commence par `v` est envoyé, par exemple `v1.0.0`.
 
-```bash
-docker build -t fastapi-starter .
-docker run -p 8000:8000 fastapi-starter
-```
+## Q5 - Les jobs du workflow CI
 
-## CI
+Le workflow contient trois jobs. Les jobs `lint` et `build` s'exécutent en parallèle. Le job `test` attend la fin des deux jobs grâce à `needs: [lint, build]`.
 
-GitHub Actions workflow runs linting and tests with coverage on Python 3.13. See `.github/workflows/ci.yml`.
+## Q6 - Rôle de needs
 
-## License
+Sans `needs`, les jobs peuvent démarrer en même temps et le workflow peut être plus rapide, mais l'ordre n'est pas garanti. Avec `needs`, le job `test` attend `lint` et `build`. Si le lint échoue, le job `test` ne s'exécute pas.
 
-MIT. See [LICENSE](./LICENSE).
+## Q7 - Installation dans chaque job
+
+Chaque job utilise un runner isolé. C'est pour cela qu'il faut refaire le checkout du code et l'installation de Python dans chaque job.
+
+## Q8 - Contextes utilisés
+
+- Nom de l'application : `env.APP_NAME`
+- Acteur : `github.actor`
+- Nom de l'événement : `github.event_name`
+- Branche : `github.ref_name`
+- SHA du commit : `github.sha`
+- Système d'exploitation du runner : `runner.os`
+
+## Q9 - Push et pull request
+
+Pour un push, `github.event_name` vaut `push` et `github.head_ref` ainsi que `github.base_ref` sont vides. Pour une pull request, `github.event_name` vaut `pull_request`, `github.head_ref` contient la branche source et `github.base_ref` contient la branche cible, ici `main`.
+
+## Q10 - Contexte GitHub complet
+
+La commande `echo '${{ toJson(github) }}'` affiche toutes les informations du contexte GitHub. Avec un push, le message du commit est disponible dans `github.event.head_commit.message`.
+
+## Résultat du workflow
+
+Le workflow CI est passé avec succès : [voir le run complet](https://github.com/CyPheer1/python-fastapi-app/actions/runs/42298450428).
