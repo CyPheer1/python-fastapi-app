@@ -19,3 +19,7 @@ Si une step utilise `>` au lieu de `>>` pour écrire dans `GITHUB_OUTPUT`, elle 
 ## Q5
 
 Sans `needs: build`, le job `deploy` peut démarrer indépendamment. Il ne peut alors pas utiliser les sorties déclarées par `build` avec `needs.build.outputs.full_version`, car il n'a pas établi de dépendance vers ce job. De plus, l'affichage peut contenir une valeur vide.
+
+## Capture de l'exécution réussie
+
+![Exécution réussie du TP6](capture-tp6-success.png)
