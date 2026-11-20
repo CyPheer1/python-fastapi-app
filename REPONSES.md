@@ -21,3 +21,7 @@ Dans une action composite, chaque step `run` doit déclarer son shell avec `shel
 - Badge Marketplace : « Verified » — créateur vérifié comme organisation partenaire officielle.
 - Nombre d'étoiles du dépôt : environ 5 000 étoiles.
 - Code source : principalement dans le dossier `src/`, avec le code compilé distribué dans `dist/`.
+
+## Capture de l'exécution réussie
+
+![Exécution réussie du TP7](capture-tp7-success.png)
