@@ -1,0 +1,4 @@
+name: Env, Inputs and Outputs Lab
+
+on:
+  workflow_dispatch:
